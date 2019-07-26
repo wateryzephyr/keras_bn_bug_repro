@@ -7,13 +7,13 @@
 To repro bug:
 
 ```bash
-cd <repo_root>
+$ cd <repo_root>
 
-cd docker
+$ cd docker
 
-make build
+$ make build
 
-make run
+$ make run
 
 # Inside docker
 $ cd /keras_debug
