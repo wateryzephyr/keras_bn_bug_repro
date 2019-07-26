@@ -56,6 +56,7 @@ def _patch_backend_function(f):
 
 
 def get_model(input_layer, use_batch_norm):
+    """Get a reasonably beefy model to better demonstrate the slowdown."""
     x = Conv2D(
         filters=64,
         kernel_size=(3, 3),
@@ -113,8 +114,16 @@ def get_model(input_layer, use_batch_norm):
 
 
 class UpdateHook(tf.train.SessionRunHook):
+    """This hook is a lightweight version of one used in practice.
+
+    This hook is typically needed for various things: making sure the keras backend session is
+    the same as that being used by TensorFlow, initializing a keras model's weights to be the same
+    as those from the TF graph, and running various model updates (e.g. batch norm moving average
+    and variance).
+    """
 
     def __init__(self, keras_model):
+        # This would be where batch norm updates come from.
         self._updates = keras_model.updates
 
     def after_create_session(self, session, coord):
@@ -153,6 +162,7 @@ if __name__ == "__main__":
     # Set keras backend format.
     keras.backend.set_image_data_format(DATA_FORMAT)
 
+    # Get random input.
     inputs = tf.random_normal(shape=[BATCH_SIZE, 3, INPUT_H, INPUT_W])
 
     model_input = keras.layers.Input(tensor=inputs)
